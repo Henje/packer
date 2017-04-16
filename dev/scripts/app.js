@@ -192,7 +192,7 @@ angular.module('packer', ['ngMaterial', 'sticky'])
       .then(function (data) {
         cards = {};
         cards.data = data.data.filter(function (c) {
-          return c.set === 'EXPERT1' || c.set === 'TGT' ||
+          return c.set === 'EXPERT1' || c.set === 'TGT' || c.set === 'UNGORO' ||
             (c.set === 'OG' && (c.name !== "C'Thun" && c.name !== 'Beckoner of Evil'));
         });
         filterCards();
@@ -495,7 +495,7 @@ angular.module('packer', ['ngMaterial', 'sticky'])
             height = (scale * 465);
             preview.style.height = height + 'px';
           } else {
-            preview.src = '//wow.zamimg.com/images/hearthstone/cards/enus/medium/' + scope.card.detail.id + '.png';
+            preview.src = '//art.hearthstonejson.com/v1/render/latest/enUS/256x/' + scope.card.detail.id + '.png';
             scale = rect.width / 200;
             preview.style.width = (scale * 200) + 'px';
             height = (scale * 303);
