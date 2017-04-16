@@ -120,12 +120,23 @@ angular.module('packer', ['ngMaterial', 'sticky'])
         if (cards.hasOwnProperty(name) && $scope.collShow.checkC(cards[name])) {
           var card = cards[name];
           var max = card.rarity === 'lgnd' ? 1 : 2;
-          var nonduplicates = card[group] > max ? max : card[group];
-          var duplicates = card[group] - max < 0 ? 0 : card[group] - max;
-          count.number += nonduplicates;
-          count.value += card[group] * disenchant[group][card.rarity];
-          count.extra += duplicates * disenchant[group][card.rarity];
-          count.missing += (max - nonduplicates) * craft[group][card.rarity];
+          if(group === 'both') {
+            var nonduplicates = card['norm'] + card['gold'] > max ? max : card['norm'] + card['gold'];
+            var duplicates = card['norm'] + card['gold'] - nonduplicates;
+            var normduplicates = card['norm'] >= duplicates ? duplicates : card['norm'];
+            var goldduplicates = duplicates - normduplicates;
+            count.number += nonduplicates;
+            count.value += card['norm'] * disenchant['norm'][card.rarity] + card['gold'] * disenchant['gold'][card.rarity];
+            count.extra += normduplicates * disenchant['norm'][card.rarity] + goldduplicates * disenchant['gold'][card.rarity];
+            count.missing += (max - nonduplicates) * craft['norm'][card.rarity];
+          } else {
+            var nonduplicates = card[group] > max ? max : card[group];
+            var duplicates = card[group] - max < 0 ? 0 : card[group] - max;
+            count.number += nonduplicates;
+            count.value += card[group] * disenchant[group][card.rarity];
+            count.extra += duplicates * disenchant[group][card.rarity];
+            count.missing += (max - nonduplicates) * craft[group][card.rarity];
+          }
         }
       }
       return count;
@@ -141,6 +152,11 @@ angular.module('packer', ['ngMaterial', 'sticky'])
         gold: function (cnt) {
           var res = counter('gold', cnt);
           return 'golden owned: ' + res.number + ' dust value: ' + res.value +
+            ' dust value from duplicates: ' + res.extra + ' craft missing: ' + res.missing;
+        },
+        both: function (cnt) {
+          var res = counter('both', cnt);
+          return 'for completion: owned: ' + res.number + ' dust value: ' + res.value +
             ' dust value from duplicates: ' + res.extra + ' craft missing: ' + res.missing;
         }
       },
